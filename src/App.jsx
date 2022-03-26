@@ -34,26 +34,29 @@ const App = () => {
   useEffect(()=> {
     createAnonymousSession();
 
+    if(sdk.account.get !== null){
+      try {
+        sdk.subscribe('collections.623e9fa6d3bc9f4cc088.documents', response => {
+          console.log(response, 'subscription response');
+          setResponse(response)
+          alert(response)
+      
+          
+        });
+        
+      } catch (error) {
+        console.log(error, 'error')
+      }
+
+    }
+
+
   }, [])
   
   
   
-  // if(sdk.account.get !== null){
-  //   try {
-  //     sdk.subscribe('collections.623e9fa6d3bc9f4cc088.documents', response => {
-  //       console.log(response, 'subscription response');
-  //       setResponse(response)
-  //       alert(response)
-    
-        
-  //     });
-      
-  //   } catch (error) {
-  //     console.log(error, 'error')
-  //   }
-
-  // }
-
+  
+  
   const createDocument = async () => {
 
     try{
