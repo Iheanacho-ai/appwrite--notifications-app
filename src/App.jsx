@@ -6,7 +6,6 @@ import './App.css';
 
 const App = () => {
   const [theArray, setTheArray] = useState([]);
-  const [deleteCount, setDeleteCount] = useState(0);
   const [response, setResponse] = useState('');
 
   const notify = (response) => {
@@ -38,8 +37,7 @@ const App = () => {
       try {
         sdk.subscribe('collections.623e9fa6d3bc9f4cc088.documents', response => {
           console.log(response, 'subscription response');
-          setResponse(response)
-          alert(response)
+          setResponse(`The Appwrite ${response.event} event was called`)
       
           
         });
@@ -55,25 +53,6 @@ const App = () => {
   
   
   
-  
-  
-  const createDocument = async () => {
-
-    try{
-      await sdk.database.createDocument('623e9fa6d3bc9f4cc088', "unique()", {
-        "message": "Hello World!",
-      });
-     
-      alert('item has been successfullyy added');
-      listDocuments()
-      
-      
-    }catch(error){
-      console.log(error)
-    }
-           
-  }
-
   const listDocuments = async() => {
     try {
       
@@ -83,23 +62,43 @@ const App = () => {
       console.log(error);
     }
   }
+  
+  
+  const createDocument = async () => {
+
+    try{
+      await sdk.database.createDocument('623e9fa6d3bc9f4cc088', "unique()", {
+        "message": "Hello World!",
+      });
+     
+      
+      listDocuments()
+      
+      
+    }catch(error){
+      console.log(error)
+    }
+           
+  }
+
 
 
 
   const deleteDocument = async () => {
+    if (theArray.length > 0) {
       try {
         let documentID = theArray[theArray.length - 1]
         await sdk.database.deleteDocument('623e9fa6d3bc9f4cc088', documentID);
-        alert("item have been deleted successfully")
         listDocuments();
 
-          
-        } catch (error) {
+      } catch (error) {
         console.log(error)
-          
-        }
-    
-  
+        
+      }
+      
+    } else {
+      alert('database is empty')
+    }
     
     
   }
@@ -108,16 +107,16 @@ const App = () => {
     
 
   const updateDocument = async () => {
-    if (deleteCount <= theArray.length) {
+    if (theArray.length > 0) {
       try{
       
-        setDeleteCount(deleteCount + 1);
-        let updateDocumentID = theArray[deleteCount];
+        let documentID = theArray[theArray.length - 1]
   
-        await sdk.database.updateDocument('623e9fa6d3bc9f4cc088', updateDocumentID, {
+        await sdk.database.updateDocument('623e9fa6d3bc9f4cc088', documentID, {
           "message": "Bye World!"
         })
-        alert('item sucessfully updated');
+        listDocuments();
+        
   
       }catch(error){
         console.log(error)
