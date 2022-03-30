@@ -6,7 +6,7 @@ import './App.css';
 
 const App = () => {
   const [theArray, setTheArray] = useState([]);
-  const [response, setResponse] = useState('');
+  const [response, setResponse] = useState('Welcome!');
 
   const notify = (response) => {
     toast(response)
@@ -17,7 +17,7 @@ const App = () => {
 
   sdk
     .setEndpoint('http://localhost/v1') // Your Appwrite Endpoint
-    .setProject('623e9f8f72ddf70330ba') // Your project ID
+    .setProject('624390e727ad84962ae7') // Your project ID
   ;
 
   async function createAnonymousSession(){
@@ -35,8 +35,7 @@ const App = () => {
 
     if(sdk.account.get !== null){
       try {
-        sdk.subscribe('collections.623e9fa6d3bc9f4cc088.documents', response => {
-          console.log(response, 'subscription response');
+        sdk.subscribe('collections.62439bdfd0d07f61fe83.documents', response => {
           setResponse(`The Appwrite ${response.event} event was called`)
       
           
@@ -56,18 +55,19 @@ const App = () => {
   const listDocuments = async() => {
     try {
       
-      let response = await sdk.database.listDocuments('623e9fa6d3bc9f4cc088');
-      setTheArray(prevArray => [...prevArray, response.documents[0].$id])
+      let response = await sdk.database.listDocuments('62439bdfd0d07f61fe83');
+      response.documents.map(document => setTheArray(prevArray => [...prevArray, document.$id]) )
+      
     } catch (error) {
       console.log(error);
     }
   }
-  
+
   
   const createDocument = async () => {
 
     try{
-      await sdk.database.createDocument('623e9fa6d3bc9f4cc088', "unique()", {
+      await sdk.database.createDocument('62439bdfd0d07f61fe83', "unique()", {
         "message": "Hello World!",
       });
      
@@ -88,7 +88,7 @@ const App = () => {
     if (theArray.length > 0) {
       try {
         let documentID = theArray[theArray.length - 1]
-        await sdk.database.deleteDocument('623e9fa6d3bc9f4cc088', documentID);
+        await sdk.database.deleteDocument('62439bdfd0d07f61fe83', documentID);
         listDocuments();
 
       } catch (error) {
@@ -106,31 +106,9 @@ const App = () => {
       
     
 
-  const updateDocument = async () => {
-    if (theArray.length > 0) {
-      try{
-      
-        let documentID = theArray[theArray.length - 1]
-  
-        await sdk.database.updateDocument('623e9fa6d3bc9f4cc088', documentID, {
-          "message": "Bye World!"
-        })
-        listDocuments();
-        
-  
-      }catch(error){
-        console.log(error)
-      }
-    } else {
-      alert('database is empty')
-    }
-    
-  }
-
-
   useEffect(() => {
-    notify(response);
-  }, [response]);
+    notify(response)
+  }, [response])
 
 
 
@@ -138,7 +116,6 @@ const App = () => {
   return (
     <div className="App">
       <button type='button' onClick={createDocument}>Create Document</button>
-      <button type='button' onClick={updateDocument}>Update Document</button>
       <button type='button' onClick={deleteDocument}>Delete Document</button>
       <ToastContainer/>
     </div>
